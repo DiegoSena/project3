@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -53,6 +54,7 @@ public class AddStockDialog extends DialogFragment {
                         addStock();
                     }
                 });
+
         builder.setNegativeButton(getString(R.string.dialog_cancel), null);
 
         Dialog dialog = builder.create();
@@ -73,5 +75,13 @@ public class AddStockDialog extends DialogFragment {
         dismissAllowingStateLoss();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Button positiveButton = ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE);
+        positiveButton.setContentDescription(getString(R.string.dialog_add));
 
+        Button negativeButton = ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_NEGATIVE);
+        negativeButton.setContentDescription(getString(R.string.dialog_cancel));
+    }
 }
