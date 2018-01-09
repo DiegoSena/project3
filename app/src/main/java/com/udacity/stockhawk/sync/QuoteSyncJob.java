@@ -11,6 +11,7 @@ import android.icu.text.SimpleDateFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.udacity.stockhawk.BuildConfig;
 import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.data.PrefUtils;
 
@@ -65,7 +66,8 @@ public final class QuoteSyncJob {
         HttpUrl.Builder httpUrl = HttpUrl.parse(QUANDL_ROOT+symbol+".json").newBuilder();
         httpUrl.addQueryParameter("column_index", "4")  //closing price
                 .addQueryParameter("start_date", formatter.format(startDate))
-                .addQueryParameter("end_date", formatter.format(endDate));
+                .addQueryParameter("end_date", formatter.format(endDate))
+                .addQueryParameter("api_key", BuildConfig.QUANDL_KEY);
         return httpUrl.build();
     }
 

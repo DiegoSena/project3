@@ -20,4 +20,9 @@
         <item name="android:textSize">25sp</item>
         <item name="android:textAllCaps">true</item>
     </style>
+
+
+    <style name="HistoryListTextStyle">
+        <item name="android:textSize">20sp</item>
+    </style>
 </resources>
