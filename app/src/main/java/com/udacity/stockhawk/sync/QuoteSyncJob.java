@@ -1,5 +1,6 @@
 package com.udacity.stockhawk.sync;
 
+import android.app.Activity;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -11,6 +12,7 @@ import android.icu.text.SimpleDateFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.udacity.stockhawk.BuildConfig;
 import com.udacity.stockhawk.data.Contract;
@@ -56,7 +58,6 @@ public final class QuoteSyncJob {
     private static final LocalDate startDate = LocalDate.now().minus(YEARS_OF_HISTORY, ChronoUnit.YEARS);
     private static final LocalDate endDate = LocalDate.now();
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static StringBuilder historyBuilder = new StringBuilder();
 
     private static final String LOG_TAG = QuoteSyncJob.class.getSimpleName();
 
@@ -84,7 +85,7 @@ public final class QuoteSyncJob {
         double change = price - historicData.getJSONArray(1).getDouble(1);
         double percentChange = 100 * ((price - historicData.getJSONArray(1).getDouble(1)) / historicData.getJSONArray(1).getDouble(1));
 
-        historyBuilder = new StringBuilder();
+        StringBuilder historyBuilder = new StringBuilder();
 
         JSONArray array = null;
         try{
@@ -106,45 +107,52 @@ public final class QuoteSyncJob {
         return quoteCV;
     }
 
-    static void getQuotes(final Context context) {
+    private static void sendDataChangedBroadcast(Context context) {
+        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
+        context.sendBroadcast(dataUpdatedIntent);
+    }
+
+    private static void getStockInfo(final Context context, final String stock) {
+        Request request = new Request.Builder()
+                .url(createQuery(stock)).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Timber.e("OKHTTP", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if(response.code() != 404){
+                        String body = response.body().string();
+                        JSONObject jsonObject = new JSONObject(body);
+                        ContentValues quotes = processStock(jsonObject.getJSONObject("dataset"));
+
+                        context.getContentResolver().insert(Contract.Quote.URI, quotes);
+                        PrefUtils.addStock(context, stock);
+                    }
+                } catch (JSONException ex) {
+                    Log.w(LOG_TAG,"Error parsing json response", ex);
+                }
+            }
+        });
+    }
+
+    static void getQuotes(final Context context, final String stock) {
 
         Timber.d("Running sync job");
 
-        historyBuilder = new StringBuilder();
-
         try {
-
-            Set<String> stockPref = PrefUtils.getStocks(context);
-
-            for (String stock : stockPref) {
-                Request request = new Request.Builder()
-                        .url(createQuery(stock)).build();
-
-                client.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        Timber.e("OKHTTP", e.getMessage());
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        try {
-                            String body = response.body().string();
-                            JSONObject jsonObject = new JSONObject(body);
-                            ContentValues quotes = processStock(jsonObject.getJSONObject("dataset"));
-
-                            context.getContentResolver().insert(Contract.Quote.URI, quotes);
-                        } catch (JSONException ex) {
-                        }
-                    }
-                });
-
-
+            if(stock != null){
+                getStockInfo(context, stock);
+            }else {
+                for (String stockPref : PrefUtils.getStocks(context)) {
+                    getStockInfo(context, stockPref);
+                }
             }
-
-            Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
-            context.sendBroadcast(dataUpdatedIntent);
-
+            sendDataChangedBroadcast(context);
         } catch (Exception exception) {
             Timber.e(exception, "Error fetching stock quotes");
         }
@@ -169,19 +177,24 @@ public final class QuoteSyncJob {
 
 
     public static synchronized void initialize(final Context context) {
-
         schedulePeriodic(context);
         syncImmediately(context);
-
     }
 
     public static synchronized void syncImmediately(Context context) {
+        syncImmediately(context, null);
+    }
+
+    public static synchronized void syncImmediately(Context context, String symbolAdded) {
 
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
             Intent nowIntent = new Intent(context, QuoteIntentService.class);
+            if(symbolAdded != null){
+                nowIntent.putExtra("ADDED_SYMBOL", symbolAdded);
+            }
             context.startService(nowIntent);
         } else {
 

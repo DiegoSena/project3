@@ -66,7 +66,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListViewHolder> 
         history.setDate(format.format(price.getDate()));
         history.setPrice(dollarFormat.format(price.getPrice()));
 
-        if(PrefUtils.getDisplayMode(context).equals(R.string.pref_display_mode_absolute_key)){
+        if(PrefUtils.getDisplayMode(context).equals(context.getString(R.string.pref_display_mode_absolute_key))){
             history.setVariation(dollarFormatWithPlus.format(price.getAbsoluteChange()));
 
         }else{
@@ -80,7 +80,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListViewHolder> 
         PriceListViewHolderCurrent current = holder;
 
         current.setCurrentPrice(dollarFormat.format(price.getPrice()));
-        if(PrefUtils.getDisplayMode(context).equals(R.string.pref_display_mode_absolute_key)){
+        if(PrefUtils.getDisplayMode(context).equals(context.getString(R.string.pref_display_mode_absolute_key))){
             current.setCurrentVariation(dollarFormatWithPlus.format(price.getAbsoluteChange()));
         }else{
             current.setCurrentVariation(percentageFormat.format(price.getPercentageChange() / 100));

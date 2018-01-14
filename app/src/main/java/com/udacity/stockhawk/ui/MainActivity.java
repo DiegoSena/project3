@@ -132,8 +132,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
 
-            PrefUtils.addStock(this, symbol);
-            QuoteSyncJob.syncImmediately(this);
+            QuoteSyncJob.syncImmediately(this, symbol);
+
+            if(!PrefUtils.getStocks(this).contains(symbol)){
+                Toast.makeText(this, symbol + " does not exist.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
