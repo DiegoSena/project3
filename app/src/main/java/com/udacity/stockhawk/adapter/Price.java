@@ -2,10 +2,6 @@ package com.udacity.stockhawk.adapter;
 
 import java.util.Date;
 
-/**
- * Created by diego on 09/01/18.
- */
-
 public class Price {
 
     private double price;

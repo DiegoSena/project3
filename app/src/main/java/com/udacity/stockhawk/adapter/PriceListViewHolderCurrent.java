@@ -5,19 +5,19 @@ import android.widget.TextView;
 
 import com.udacity.stockhawk.R;
 
-/**
- * Created by diego on 09/01/18.
- */
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class PriceListViewHolderCurrent extends PriceListViewHolder {
 
-    private TextView currentPrice;
-    private TextView currentVariation;
+    @BindView(R.id.current_price)
+    TextView currentPrice;
+    @BindView(R.id.current_variation_textview)
+    TextView currentVariation;
 
     public PriceListViewHolderCurrent(View itemView) {
         super(itemView);
-        this.currentPrice = (TextView) itemView.findViewById(R.id.current_price);
-        this.currentVariation = (TextView) itemView.findViewById(R.id.current_variation_textview);
+        ButterKnife.bind(this, itemView);
     }
 
     public void setCurrentPrice(String currentPrice){

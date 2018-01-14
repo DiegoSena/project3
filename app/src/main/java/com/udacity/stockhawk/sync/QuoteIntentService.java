@@ -12,10 +12,11 @@ public class QuoteIntentService extends IntentService {
         super(QuoteIntentService.class.getSimpleName());
     }
 
+    public static final String SYMBOL_ADDED_EXTRA = "SYMBOL_ADDED";
     @Override
     protected void onHandleIntent(Intent intent) {
         Timber.d("Intent handled");
-        String symbol = intent.getStringExtra("SYMBOL_ADDED");
+        String symbol = intent.getStringExtra(SYMBOL_ADDED_EXTRA);
         QuoteSyncJob.getQuotes(getApplicationContext(), symbol );
     }
 }

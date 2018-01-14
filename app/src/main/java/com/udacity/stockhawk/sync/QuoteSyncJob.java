@@ -1,18 +1,14 @@
 package com.udacity.stockhawk.sync;
 
-import android.app.Activity;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.icu.math.BigDecimal;
-import android.icu.text.SimpleDateFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.udacity.stockhawk.BuildConfig;
 import com.udacity.stockhawk.data.Contract;
@@ -26,14 +22,6 @@ import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.temporal.ChronoUnit;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -193,7 +181,7 @@ public final class QuoteSyncJob {
         if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
             Intent nowIntent = new Intent(context, QuoteIntentService.class);
             if(symbolAdded != null){
-                nowIntent.putExtra("ADDED_SYMBOL", symbolAdded);
+                nowIntent.putExtra(QuoteIntentService.SYMBOL_ADDED_EXTRA, symbolAdded);
             }
             context.startService(nowIntent);
         } else {

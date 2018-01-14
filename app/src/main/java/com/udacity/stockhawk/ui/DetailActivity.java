@@ -39,7 +39,7 @@ public class DetailActivity extends AppCompatActivity {
     PriceListAdapter priceListAdapter;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
+    public static final String SYMBOL_EXTRA = "SYMBOL";
     private static final String LOG_TAG = DetailActivity.class.getSimpleName();
 
     @Override
@@ -47,10 +47,9 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_activity);
         ButterKnife.bind(this);
-        String symbol = getIntent().getStringExtra("SYMBOL");
+        String symbol = getIntent().getStringExtra(SYMBOL_EXTRA);
         symbolTextView.setText(symbol);
         List<Price> prices = getPrices(symbol);
-
 
         priceListAdapter = new PriceListAdapter(this, prices);
         pricesRecyclerView.setAdapter(priceListAdapter);

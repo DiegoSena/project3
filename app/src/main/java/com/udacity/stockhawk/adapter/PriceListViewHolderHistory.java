@@ -5,21 +5,21 @@ import android.widget.TextView;
 
 import com.udacity.stockhawk.R;
 
-/**
- * Created by diego on 09/01/18.
- */
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class PriceListViewHolderHistory extends PriceListViewHolder {
 
-    private TextView date;
-    private TextView price;
-    private TextView variation;
+    @BindView(R.id.price_list_date_textview)
+    TextView date;
+    @BindView(R.id.price_list_price_textview)
+    TextView price;
+    @BindView(R.id.price_list_variation_textview)
+    TextView variation;
 
     public PriceListViewHolderHistory(View itemView) {
         super(itemView);
-        date = (TextView) itemView.findViewById(R.id.price_list_date_textview);
-        price = (TextView) itemView.findViewById(R.id.price_list_price_textview);
-        variation = (TextView) itemView.findViewById(R.id.price_list_variation_textview);
+        ButterKnife.bind(this, itemView);
     }
 
     public void setDate(String date) {

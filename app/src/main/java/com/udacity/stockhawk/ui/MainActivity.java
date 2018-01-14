@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onClick(String symbol) {
         Timber.d("Symbol clicked: %s", symbol);
         Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra("SYMBOL", symbol);
+        intent.putExtra(DetailActivity.SYMBOL_EXTRA , symbol);
         startActivity(intent);
     }
 
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             QuoteSyncJob.syncImmediately(this, symbol);
 
             if(!PrefUtils.getStocks(this).contains(symbol)){
-                Toast.makeText(this, symbol + " does not exist.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.symbol_no_exist, symbol), Toast.LENGTH_SHORT).show();
             }
         }
     }

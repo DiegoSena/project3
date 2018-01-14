@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.udacity.stockhawk.R;
+import com.udacity.stockhawk.Utilities;
 import com.udacity.stockhawk.data.PrefUtils;
 
 import java.text.DecimalFormat;
@@ -16,28 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by diego on 09/01/18.
- */
-
 public class PriceListAdapter extends RecyclerView.Adapter<PriceListViewHolder> {
     private Context context;
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     private List<Price> prices = new ArrayList<>();
-    private final DecimalFormat dollarFormatWithPlus;
-    private final DecimalFormat dollarFormat;
-    private final DecimalFormat percentageFormat;
 
     public PriceListAdapter(Context context, List<Price> prices){
         this.context = context;
         this.prices = prices;
-        dollarFormat = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
-        dollarFormatWithPlus = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
-        dollarFormatWithPlus.setPositivePrefix("+$");
-        percentageFormat = (DecimalFormat) NumberFormat.getPercentInstance(Locale.getDefault());
-        percentageFormat.setMaximumFractionDigits(2);
-        percentageFormat.setMinimumFractionDigits(2);
-        percentageFormat.setPositivePrefix("+");
     }
 
     @Override
@@ -64,13 +51,13 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListViewHolder> 
     private void setHistoryPriceLayout(PriceListViewHolderHistory holder, Price price) {
         PriceListViewHolderHistory history = holder;
         history.setDate(format.format(price.getDate()));
-        history.setPrice(dollarFormat.format(price.getPrice()));
+        history.setPrice(Utilities.formatDollars((price.getPrice())));
 
         if(PrefUtils.getDisplayMode(context).equals(context.getString(R.string.pref_display_mode_absolute_key))){
-            history.setVariation(dollarFormatWithPlus.format(price.getAbsoluteChange()));
+            history.setVariation(Utilities.formatDollarsWithPlus(price.getAbsoluteChange()));
 
         }else{
-            history.setVariation(percentageFormat.format(price.getPercentageChange() / 100));
+            history.setVariation(Utilities.formatPercentage(price.getPercentageChange() / 100));
         }
 
         history.setVariationBackground(getVariation(price.getAbsoluteChange()));
@@ -79,11 +66,11 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListViewHolder> 
     private void setCurrentPriceLayout(PriceListViewHolderCurrent holder, Price price) {
         PriceListViewHolderCurrent current = holder;
 
-        current.setCurrentPrice(dollarFormat.format(price.getPrice()));
+        current.setCurrentPrice(Utilities.formatDollars(price.getPrice()));
         if(PrefUtils.getDisplayMode(context).equals(context.getString(R.string.pref_display_mode_absolute_key))){
-            current.setCurrentVariation(dollarFormatWithPlus.format(price.getAbsoluteChange()));
+            current.setCurrentVariation(Utilities.formatDollarsWithPlus(price.getAbsoluteChange()));
         }else{
-            current.setCurrentVariation(percentageFormat.format(price.getPercentageChange() / 100));
+            current.setCurrentVariation(Utilities.formatPercentage(price.getPercentageChange() / 100));
         }
         current.setCurrentVariationBackground(getVariation(price.getAbsoluteChange()));
     }
