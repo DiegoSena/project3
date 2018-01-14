@@ -10,6 +10,7 @@ import android.icu.math.BigDecimal;
 import android.icu.text.SimpleDateFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.udacity.stockhawk.BuildConfig;
 import com.udacity.stockhawk.data.Contract;
@@ -57,13 +58,14 @@ public final class QuoteSyncJob {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static StringBuilder historyBuilder = new StringBuilder();
 
+    private static final String LOG_TAG = QuoteSyncJob.class.getSimpleName();
 
-
-    private QuoteSyncJob() { }
+    private QuoteSyncJob() {
+    }
 
     static HttpUrl createQuery(String symbol) {
 
-        HttpUrl.Builder httpUrl = HttpUrl.parse(QUANDL_ROOT+symbol+".json").newBuilder();
+        HttpUrl.Builder httpUrl = HttpUrl.parse(QUANDL_ROOT + symbol + ".json").newBuilder();
         httpUrl.addQueryParameter("column_index", "4")  //closing price
                 .addQueryParameter("start_date", formatter.format(startDate))
                 .addQueryParameter("end_date", formatter.format(endDate))
@@ -71,7 +73,8 @@ public final class QuoteSyncJob {
         return httpUrl.build();
     }
 
-    static ContentValues processStock(JSONObject jsonObject) throws JSONException{
+    static ContentValues processStock(JSONObject jsonObject) throws JSONException {
+
 
         String stockSymbol = jsonObject.getString("dataset_code");
 
@@ -79,18 +82,18 @@ public final class QuoteSyncJob {
 
         double price = historicData.getJSONArray(0).getDouble(1);
         double change = price - historicData.getJSONArray(1).getDouble(1);
-        double percentChange = 100 * (( price - historicData.getJSONArray(1).getDouble(1) ) / historicData.getJSONArray(1).getDouble(1));
+        double percentChange = 100 * ((price - historicData.getJSONArray(1).getDouble(1)) / historicData.getJSONArray(1).getDouble(1));
 
         historyBuilder = new StringBuilder();
 
-        for (int i = 0; i<historicData.length(); i++) {
-            JSONArray array = historicData.getJSONArray(i);
-            // Append date
-            historyBuilder.append(array.get(0));
-            historyBuilder.append(", ");
-            // Append close
-            historyBuilder.append(array.getDouble(1));
-            historyBuilder.append("\n");
+        JSONArray array = null;
+        try{
+            for (int i = 0; i < historicData.length(); i++) {
+                array = historicData.getJSONArray(i);
+                historyBuilder.append(array.get(0) + ", " + array.getDouble(1) + "\n");
+            }
+        }catch (Exception e){
+            Log.e(LOG_TAG, "It was not possible to add history for symbol " + stockSymbol + "for history " + array, e);
         }
 
         ContentValues quoteCV = new ContentValues();
@@ -130,8 +133,9 @@ public final class QuoteSyncJob {
                             JSONObject jsonObject = new JSONObject(body);
                             ContentValues quotes = processStock(jsonObject.getJSONObject("dataset"));
 
-                            context.getContentResolver().insert(Contract.Quote.URI,quotes);
-                        } catch(JSONException ex){}
+                            context.getContentResolver().insert(Contract.Quote.URI, quotes);
+                        } catch (JSONException ex) {
+                        }
                     }
                 });
 

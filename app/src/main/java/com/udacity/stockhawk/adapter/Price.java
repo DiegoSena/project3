@@ -10,7 +10,9 @@ public class Price {
 
     private double price;
     private Date date;
-    private double variation;
+    private double percentageChange;
+
+    private double absoluteChange;
 
     public double getPrice() {
         return price;
@@ -28,11 +30,24 @@ public class Price {
         this.date = date;
     }
 
-    public double getVariation() {
-        return variation;
+    public double getPercentageChange() {
+        return percentageChange;
     }
 
-    public void setVariation(double variation) {
-        this.variation = variation;
+    public void setPercentageChange(double percentageChange) {
+        this.percentageChange = percentageChange;
+    }
+
+    public double getAbsoluteChange() {
+        return absoluteChange;
+    }
+
+    public void setAbsoluteChange(double absoluteChange) {
+        this.absoluteChange = absoluteChange;
+    }
+
+    @Override
+    public String toString() {
+        return date.toString() + " - " + String.valueOf(price);
     }
 }

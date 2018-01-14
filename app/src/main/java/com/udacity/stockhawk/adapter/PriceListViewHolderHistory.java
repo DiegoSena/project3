@@ -14,6 +14,7 @@ public class PriceListViewHolderHistory extends PriceListViewHolder {
     private TextView date;
     private TextView price;
     private TextView variation;
+
     public PriceListViewHolderHistory(View itemView) {
         super(itemView);
         date = (TextView) itemView.findViewById(R.id.price_list_date_textview);
@@ -26,19 +27,17 @@ public class PriceListViewHolderHistory extends PriceListViewHolder {
         this.date.setContentDescription(date);
     }
 
-    public void setPrice(double price){
-        this.price.setText(String.valueOf(price));
-        this.price.setContentDescription(String.valueOf(price));
+    public void setPrice(String price){
+        this.price.setText(price);
+        this.price.setContentDescription(price);
     }
 
-    public void setVariation(double variation){
-        this.variation.setText(String.valueOf(variation));
+    public void setVariation(String variation){
+        this.variation.setText(variation);
         this.variation.setContentDescription(String.valueOf(variation));
+    }
 
-        if(variation > 0){
-            this.variation.setBackgroundResource(R.drawable.percent_change_pill_green);
-        }else{
-            this.variation.setBackgroundResource(R.drawable.percent_change_pill_red);
-        }
+    public void setVariationBackground(int variationBackground) {
+        this.variation.setBackgroundResource(variationBackground);
     }
 }

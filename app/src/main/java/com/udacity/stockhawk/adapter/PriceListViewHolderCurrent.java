@@ -20,21 +20,18 @@ public class PriceListViewHolderCurrent extends PriceListViewHolder {
         this.currentVariation = (TextView) itemView.findViewById(R.id.current_variation_textview);
     }
 
-    public void setCurrentPrice(double currentPrice){
-        this.currentPrice.setText(String.valueOf(currentPrice));
-        this.currentPrice.setContentDescription(String.valueOf(currentPrice));
+    public void setCurrentPrice(String currentPrice){
+        this.currentPrice.setText(currentPrice);
+        this.currentPrice.setContentDescription(currentPrice);
     }
 
-    public void setCurrentVariation(double currentVariation){
-        this.currentVariation.setText(String.valueOf(currentVariation));
-        this.currentVariation.setContentDescription(String.valueOf(currentVariation));
-
-        if(currentVariation > 0){
-            this.currentVariation.setBackgroundResource(R.drawable.percent_change_pill_green);
-        }else{
-            this.currentVariation.setBackgroundResource(R.drawable.percent_change_pill_red);
-        }
+    public void setCurrentVariation(String currentVariation){
+        this.currentVariation.setText(currentVariation);
+        this.currentVariation.setContentDescription(currentVariation);
     }
 
 
+    public void setCurrentVariationBackground(int currentVariationBackground) {
+        this.currentVariation.setBackgroundResource(currentVariationBackground);
+    }
 }
