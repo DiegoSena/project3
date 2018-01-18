@@ -1,4 +1,13 @@
 <resources>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="widget_margin">8dp</dimen>
+    <dimen name="no_border">0dp</dimen>
+    <dimen name="floating_button_elevation">6dp</dimen>
+    <dimen name="add_symbol_margin_top">16dp</dimen>
+    <dimen name="add_symbol_margin">4dp</dimen>
+    <dimen name="separator_height">2dp</dimen>
+    <dimen name="separator_padding">20dp</dimen>
+    <dimen name="no_width">0dp</dimen>
+    <dimen name="margin_end">10dp</dimen>
+    <dimen name="padding_variation">3dp</dimen>
 </resources>

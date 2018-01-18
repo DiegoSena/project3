@@ -57,8 +57,12 @@ public final class QuoteSyncJob {
         HttpUrl.Builder httpUrl = HttpUrl.parse(QUANDL_ROOT + symbol + ".json").newBuilder();
         httpUrl.addQueryParameter("column_index", "4")  //closing price
                 .addQueryParameter("start_date", formatter.format(startDate))
-                .addQueryParameter("end_date", formatter.format(endDate))
-                .addQueryParameter("api_key", BuildConfig.QUANDL_KEY);
+                .addQueryParameter("end_date", formatter.format(endDate));
+
+        if(BuildConfig.QUANDL_KEY != null && !BuildConfig.QUANDL_KEY.isEmpty()){
+            httpUrl.addQueryParameter("api_key", BuildConfig.QUANDL_KEY);
+        }
+
         return httpUrl.build();
     }
 
